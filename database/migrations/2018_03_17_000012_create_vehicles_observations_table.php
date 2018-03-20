@@ -15,7 +15,7 @@ class CreateVehiclesObservationsTable extends Migration
     {
         Schema::create('vehicles_observations', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('vehicle_id')->unsigned()->nullable();
+            $table->integer('vehicle_id')->unsigned();
             $table->foreign('vehicle_id')->references('id')->on('vehicles');
             $table->string('observation', 250);
             $table->timestamps();
