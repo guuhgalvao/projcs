@@ -19,4 +19,14 @@ Auth::routes();
 
 Route::prefix('home')->group(function () {
     Route::get('/', 'HomeController@index')->name('home');
+
+    Route::prefix('management')->group(function () {
+        Route::prefix('clients')->group(function () {
+            Route::get('/', 'Management\ClientsController@index')->name('clients');
+        });
+
+        Route::prefix('providers')->group(function () {
+            Route::get('/', 'Management\ProvidersController@index')->name('providers');
+        });
+    });
 });
