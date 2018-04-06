@@ -6,5 +6,18 @@
     "Forgot your password?": "Esqueceu sua senha?",
     "Logout": "Sair",
     "Manage Clients": "Gerenciar Clientes",
-    "Manage Providers": "Gerenciar Fornecedores"
+    "Clients List": "Lista de Clientes",
+    "Manage Providers": "Gerenciar Fornecedores",
+    "Name": "Nome",
+    "ZipCode": "CEP",
+    "State": "Estado",
+    "City": "Cidade",
+    "Address": "Endereço",
+    "Number": "Número",
+    "Complement": "Complemento",
+    "Neighborhood": "Bairro",
+    "Add": "Adicionar",
+    "Consult": "Consultar",
+    "Update": "Alterar",
+    "Remove": "Remover"
 }

@@ -23,6 +23,7 @@ Route::prefix('home')->group(function () {
     Route::prefix('management')->group(function () {
         Route::prefix('clients')->group(function () {
             Route::get('/', 'Management\ClientsController@index')->name('clients');
+            Route::post('/', 'Management\ClientsController@actions');
         });
 
         Route::prefix('providers')->group(function () {
