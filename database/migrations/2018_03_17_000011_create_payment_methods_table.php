@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateServicesTypesTable extends Migration
+class CreatePaymentMethodsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateServicesTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('services_types', function (Blueprint $table) {
+        Schema::create('payment_methods', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('code');
             $table->string('name', 60);
-            $table->integer('value')->unsigned()->nullable();
-            $table->boolean('datetime_auto')->default(false);
-            $table->integer('time')->unsigned();
+            $table->boolean('card')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -30,6 +30,6 @@ class CreateServicesTypesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('services_types');
+        Schema::dropIfExists('payment_methods');
     }
 }

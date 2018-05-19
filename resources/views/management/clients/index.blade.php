@@ -35,26 +35,27 @@
                                                         </label>
                                                     </div>
                                                 </label>
-                                                <input type="text" class="form-control" name="cpf" id="cpf" placeholder="CPF/CNPJ">
+                                                <input type="text" class="form-control maskCPF" name="cpf" id="cpf" placeholder="CPF">
                                             </div>
                                         </div>
                                         <div class="form-row">
                                             <div class="form-group col-md-4">
                                                 <label for="zipcode">@lang('ZipCode')</label>
-                                                <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="99999-999">
+                                                <input type="text" class="form-control maskZipCode" id="zipcode" name="zipcode" placeholder="99999-999">
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label for="state_id">@lang('State')</label>
                                                 <select class="form-control" id="state_id" name="state_id">
                                                     <option value="" selected>Selecione...</option>
-                                                    <option value="1">São Paulo</option>
+                                                    @foreach($states as $state)
+                                                        <option value="{{ $state->id }}">{{ html_entity_decode($state->name) }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label for="city_id">@lang('City')</label>
-                                                <select class="form-control" id="city_id" name="city_id">
-                                                    <option value="" selected>Selecione...</option>
-                                                    <option value="1">Santo André</option>
+                                                <select class="form-control" id="city_id" name="city_id" disabled>
+                                                    <option value="" selected>Nenhum</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -65,7 +66,7 @@
                                             </div>
                                             <div class="form-group col-md-3">
                                                 <label for="number">@lang('Number')</label>
-                                                <input type="text" class="form-control" name="number" id="number" placeholder="@lang('Number')">
+                                                <input type="text" class="form-control maskAddressNumber" name="number" id="number" placeholder="@lang('Number')">
                                             </div>
                                         </div>
                                         <div class="form-row">
@@ -131,6 +132,38 @@
                 });
             }
 
+            function getCities(city_id){
+                $('#form_Management').ajaxSubmit({
+                    data: {actionType: 'cities'},
+                    dataType: 'json',
+                    beforeSend: function(){
+                        $('#city_id option').remove();
+                        $('#city_id').append('<option value="" selected>Carregando..</option>');
+                    },
+                    success: function(response){
+                        $('#city_id option').remove();
+                        $('#city_id').append('<option value="" selected>Selecione</option>');
+                        $.each(response, function(key, value){
+                            $('#city_id').append('<option value="'+value['id']+'">'+value['name']+'</option>');
+                        });
+                        $('#city_id').prop('disabled', false);
+                        if(city_id !== undefined){
+                            $('#city_id').val(city_id);
+                        }
+                    }
+                });
+            }
+
+            $('#state_id').on('change', function(){
+                if($(this).val() !== ""){
+                    getCities();
+                }else{
+                    $('#city_id option').remove();
+                    $('#city_id').append('<option value="" selected>Nenhum</option>');
+                    $('#city_id').prop('disabled', true);
+                }
+            });
+
             $(document).on('click', '.pagination a', function(e){
                 getList($(this).prop('href').split('page=')[1]);
                 e.preventDefault();
@@ -151,7 +184,7 @@
                                 $('#form_Management #cpf').val(response.client['cpf']);
                                 $('#form_Management #zipcode').val(response.client['zipcode']);
                                 $('#form_Management #state_id').val(response.client['state_id']);
-                                $('#form_Management #city_id').val(response.client['city_id']);
+                                getCities(response.client['city_id']);
                                 $('#form_Management #address').val(response.client['address']);
                                 $('#form_Management #number').val(response.client['number']);
                                 $('#form_Management #complement').val(response.client['complement']);

@@ -19,6 +19,7 @@ class CreateVehiclesObservationsTable extends Migration
             $table->foreign('vehicle_id')->references('id')->on('vehicles');
             $table->string('observation', 250);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

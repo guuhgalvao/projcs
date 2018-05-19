@@ -16,10 +16,11 @@ class CreateVehiclesTable extends Migration
         Schema::create('vehicles', function (Blueprint $table) {
             $table->increments('id');
             $table->string('plate', 8);
-            $table->string('brand', 45);
-            $table->string('model', 45);
-            $table->string('color', 45);
+            $table->string('brand', 45)->nullable();
+            $table->string('model', 45)->nullable();
+            $table->string('color', 45)->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

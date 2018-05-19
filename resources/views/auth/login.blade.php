@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-7">
             <div class="card ">
-                <div class="card-header bg-primary text-white">{{ __('Login') }}</div>
+                <div class="card-header bg-info text-white">{{ __('Login') }}</div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
@@ -65,13 +65,13 @@
 
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-3">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-info">
                                     {{ __('Login') }}
                                 </button>
 
-                                <a class="btn btn-link" href="{{ route('password.request') }}">
+                                {{-- <a class="btn btn-link" href="{{ route('password.request') }}">
                                     {{ __('Forgot your password?') }}
-                                </a>
+                                </a> --}}
                             </div>
                         </div>
                     </form>

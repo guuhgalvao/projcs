@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Management;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
+use App\Models\State;
+use App\Models\City;
 
 class ClientsController extends Controller
 {
     
     public function index(){
-        return view('management.clients.index', ['states' => Client::paginate(1)]);
+        return view('management.clients.index', ['states' => State::orderBy('name')->get()]);
     }
 
     public function actions(Request $request){
@@ -53,6 +55,10 @@ class ClientsController extends Controller
                 }else{
                     return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não removido']];
                 }
+                break;
+
+            case 'cities':
+                return City::where('state_id', $request->state_id)->get();
                 break;
         }
     }

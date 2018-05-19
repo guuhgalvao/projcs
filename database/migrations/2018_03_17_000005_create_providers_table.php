@@ -22,12 +22,13 @@ class CreateProvidersTable extends Migration
             $table->string('name', 60);
             $table->string('cnpj', 18)->nullable();
             $table->string('cpf', 14)->nullable();
-            $table->string('cep', 9);
+            $table->string('zipcode', 9);
             $table->string('address', 60);
             $table->integer('number')->unsigned();
-            $table->string('complement', 45);
+            $table->string('complement', 45)->nullable();
             $table->string('neighborhood', 60);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
