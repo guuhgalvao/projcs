@@ -5,27 +5,26 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card border-info">
-                <div class="card-header bg-info text-white">@lang('Manage Service Types')</div>
+                <div class="card-header bg-info text-white">@lang('Manage Values')</div>
                 <div class="card-body">
                     <div class="col-12">
                         <div class="row justify-content-center">
                             <div class="col-lg-8">
                                 <div class="row">
                                     <div class="col-md-12" id="alerts"></div>
-                                    <form class="col-12" method="POST" action="{{ url('home/management/service_types') }}" id="form_Management">
+                                    <form class="col-12" method="POST" action="{{ url('home/management/values') }}" id="form_Management">
                                         @csrf
                                         <input type="hidden" name="id" id="id">
                                         <div class="form-row">
                                             <div class="form-group col-md-6">
-                                                <label for="code">@lang('Code')</label>
-                                                <input type="text" class="form-control maskTwoNumber" name="code" id="code" placeholder="@lang('Code')">
+                                                <label for="service_type_id">@lang('Service Types')</label>
+                                                <select class="form-control" name="service_type_id" id="service_type_id">
+                                                    <option value="" selected>Selecione</option>
+                                                    @foreach($service_types as $service_type)
+                                                        <option value="{{ $service_type->id }}">{{ $service_type->name }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-                                            <div class="form-group col-md-6">
-                                                <label for="name">@lang('Name')</label>
-                                                <input type="text" class="form-control" name="name" id="name" placeholder="@lang('Name')">
-                                            </div>
-                                        </div>
-                                        <div class="form-row">
                                             <div class="form-group col-md-6">
                                                 <label for="value">@lang('Value')</label>
                                                 <div class="input-group">
@@ -34,10 +33,6 @@
                                                     </div>
                                                     <input type="text" class="form-control maskMoney2" name="value" id="value" placeholder="@lang('Value')">
                                                 </div>
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                <label for="time">@lang('Time')</label>
-                                                <input type="text" class="form-control maskHour" name="time" id="time" placeholder="00:00">
                                             </div>
                                         </div>
                                         <button type="button" class="btn btn-info" name="btn_Action" value="add">@lang('Add')</button>
@@ -67,12 +62,12 @@
                         dataType: 'json',
                         success: function(response){
                             if(!Boolean(response.error)){
+                                $('#form_Management')[0].reset();
+                                $('#form_Management #id').val('');
                                 $('#alerts').append('<div class="alert alert-'+response.alerts['type']+' alert-dismissible fade show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+response.alerts['text']+'</div>');
                             }else{
                                 $('#alerts').append('<div class="alert alert-'+response.alerts['type']+' alert-dismissible fade show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+response.alerts['text']+'</div>');
                             }
-                            $('#form_Management')[0].reset();
-                            $('#form_Management #id').val('');
                             hideLoader();
                         }
                     });
@@ -82,7 +77,7 @@
             function getList(page = 1){
                 showLoader(function(){
                     $('#form_Management').ajaxSubmit({
-                        url: 'service_types?page='+page,
+                        url: 'values?page='+page,
                         data: {actionType: 'consult'},
                         dataType: 'html',
                         success: function(response){
@@ -109,11 +104,9 @@
                         success: function(response){
                             if(!Boolean(response.error)){
                                 $('#form_Management')[0].reset();
-                                $('#form_Management #id').val(response.service_type['id']);
-                                $('#form_Management #code').val(response.service_type['code']);
-                                $('#form_Management #name').val(response.service_type['name']);
-                                $('#form_Management #value').val(response.service_type['value']);
-                                $('#form_Management #time').val(response.service_type['time']);
+                                $('#form_Management #id').val(response.value['id']);
+                                $('#form_Management #service_type_id').val(response.value['service_type_id']);
+                                $('#form_Management #value').val(response.value['value']);
                             }
                             hideLoader(function(){
                                 //$('#alerts').append('<div class="alert alert-'+response.alerts['type']+' alert-dismissible fade show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+response.alerts['text']+'</div>');

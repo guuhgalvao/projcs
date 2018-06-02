@@ -61,6 +61,7 @@
                                 <a class="dropdown-item" href="{{ url()->route('payment_methods') }}">@lang('Payment Methods')</a>
                                 <a class="dropdown-item" href="{{ url()->route('providers') }}">@lang('Providers')</a>
                                 <a class="dropdown-item" href="{{ url()->route('service_types') }}">@lang('Service Types')</a>
+                                <a class="dropdown-item" href="{{ url()->route('values') }}">@lang('Values')</a>
                                 <a class="dropdown-item" href="{{ url()->route('vehicles') }}">@lang('Vehicles')</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ url()->route('users') }}">@lang('Users')</a>

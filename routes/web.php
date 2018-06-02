@@ -50,6 +50,11 @@ Route::group(['prefix' => 'home',  'middleware' => 'auth'], function () {
             Route::post('/', 'Management\ServiceTypesController@actions');
         });
 
+        Route::prefix('values')->group(function () {
+            Route::get('/', 'Management\ServiceTypesValuesController@index')->name('values');
+            Route::post('/', 'Management\ServiceTypesValuesController@actions');
+        });
+
         Route::prefix('vehicles')->group(function () {
             Route::get('/', 'Management\VehiclesController@index')->name('vehicles');
             Route::post('/', 'Management\VehiclesController@actions');

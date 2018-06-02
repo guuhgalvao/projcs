@@ -9,6 +9,7 @@ use Auth;
 use App\Models\Service;
 use App\Models\Client;
 use App\Models\ServiceType;
+use App\Models\ServiceTypesValue;
 use App\Models\PaymentMethod;
 use App\Models\Vehicle;
 
@@ -161,7 +162,8 @@ class ServicesController extends Controller
             case 'get_value':
                 $service_type_attrs = explode('-', str_replace(' ', '', $request->service_types));
                 $service_type = ServiceType::where('code', $service_type_attrs[0])->first();
-                return $service_type->value;
+                $service_type_value = ServiceTypesValue::where('service_type_id', $service_type->id)->orderBy('created_at', 'desc')->first();
+                return !empty($service_type_value->value) ? $service_type_value->value : $service_type->value;
                 break;
         }
     }
