@@ -75,18 +75,17 @@ class ServicesController extends Controller
                     $service->started_in = $request->started_in;
                     $service->started_path = "public/services/orders/started_$service->order.pdf";
                     if($service->save()){
-                        $pdf = \PDF::loadView('service.order', ['service' => Service::find($service->id)])
-                        ->setOptions(['isPhpEnabled' => true, 'isRemoteEnabled' => true, 'isHtml5ParserEnabled' => false])
-                        ->setPaper([0, 0, 164.409, 566,929], 'portrait');
+                        //$pdf = \PDF::loadView('service.order', ['service' => Service::find($service->id)])->setOptions(['isPhpEnabled' => true, 'isRemoteEnabled' => true, 'isHtml5ParserEnabled' => false])->setPaper([0, 0, 164.409, 566,929], 'portrait');
                         // Se quiser que fique no formato a4 retrato: ->setPaper('a4', 'landscape')
-                        if(Storage::put($service->started_path, $pdf->output())){
+                        if(Storage::put($service->started_path, \PDF::loadView('service.order', ['service' => Service::find($service->id)])->setOptions(['isPhpEnabled' => true, 'isHtml5ParserEnabled' => false])->setPaper([0, 0, 164.409, 566,929], 'portrait')->output())){
+                        //if(Storage::put($service->started_path, \PDF::loadFile(Storage::url("public/services/orders/started_$service->order.html"))->setOptions(['isPhpEnabled' => true, 'isHtml5ParserEnabled' => true])->setPaper([0, 0, 164.409, 566,929])->output())){
                             if(empty($vehicle->brand)){
                                 return ['error' => false, 'alerts' => ['type' => 'success', 'text' => "Serviço adicionado"], 'redirect' => url()->route('service_vehicle', ['service_id' => $service->id]), 'vehicle' => true];
                             }else{
                                 return ['error' => false, 'alerts' => ['type' => 'success', 'text' => "Serviço adicionado. Ordem: <b>$service->order</b><br/><br/><a href='".url('/').Storage::url($service->started_path)."' target='_blank' class='btn btn-info'>Abrir Ordem</a>"], 'redirect' => url()->route('home'), 'vehicle' => true];
                             }
                         }else{
-                            return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não adicionado']];    
+                            return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não foi possível gerar o comprovante']];    
                         }
                     }else{
                         return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não adicionado']];

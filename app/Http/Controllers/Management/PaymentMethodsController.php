@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Management;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use App\Models\PaymentMethod;
 
 class PaymentMethodsController extends Controller
@@ -19,10 +20,20 @@ class PaymentMethodsController extends Controller
                 break;
 
             case 'add':
-                if(PaymentMethod::create($request->all())){
-                    return ['error' => false, 'alerts' => ['type' => 'success', 'text' => 'Adicionado']];
-                }else{
-                    return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não adicionado']];
+                try{
+                    $payment_method = new PaymentMethod();
+                    $validation = Validator::make($request->all(), $payment_method->rules('add'), $payment_method->messages());
+                    if(!$validation->fails()){
+                        if(PaymentMethod::create($request->all())){
+                            return ['error' => false, 'alerts' => ['type' => 'success', 'text' => 'Adicionado']];
+                        }else{
+                            return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não adicionado']];
+                        }
+                    }else{
+                        return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => $validation->errors()->all()]];
+                    }
+                } catch(Exception $e){
+                    return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => "FAILED: $e."]];
                 }
                 break;
 
@@ -39,14 +50,24 @@ class PaymentMethodsController extends Controller
                 break;
 
             case 'update':
-                $payment_method = PaymentMethod::find($request->id);
-                $payment_method->code = $request->code;
-                $payment_method->name = $request->name;
-                $payment_method->card = isset($request->card) ? true : false;
-                if($payment_method->save()){
-                    return ['error' => false, 'alerts' => ['type' => 'success', 'text' => 'Atualizado']];
-                }else{
-                    return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não atualizado']];
+                try{
+                    $payment_method = new PaymentMethod();
+                    $validation = Validator::make($request->all(), $payment_method->rules('update', $request), $payment_method->messages());
+                    if(!$validation->fails()){
+                        $payment_method = PaymentMethod::find($request->id);
+                        $payment_method->code = $request->code;
+                        $payment_method->name = $request->name;
+                        $payment_method->card = isset($request->card) ? true : false;
+                        if($payment_method->save()){
+                            return ['error' => false, 'alerts' => ['type' => 'success', 'text' => 'Atualizado']];
+                        }else{
+                            return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não atualizado']];
+                        }
+                    }else{
+                        return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => $validation->errors()->all()]];
+                    }
+                } catch(Exception $e){
+                    return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => "FAILED: $e."]];
                 }
                 break;
 

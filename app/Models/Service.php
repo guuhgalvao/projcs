@@ -10,8 +10,8 @@ class Service extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['user_id', 'client_id', 'service_type_id', 'vehicle_id', 'order', 'value', 'status', 'annotations', 'started_in'];
-    protected $dates = ['deleted_at'];
+    protected $fillable = ['user_id', 'client_id', 'service_type_id', 'vehicle_id', 'order', 'value', 'status', 'annotations', 'started_in', 'finished_in'];
+    protected $dates = ['started_in', 'finished_in', 'deleted_at'];
 
     //Relationship
     public function user()
@@ -52,6 +52,6 @@ class Service extends Model
 
     public function getFinishedInAttribute($value)
     {
-        return Carbon::createFromFormat('Y-m-d H:i:s', $value)->format('d/m/Y H:i');
+        return !empty($value) ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format('d/m/Y H:i') : NULL;
     }
 }

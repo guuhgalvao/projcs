@@ -6,6 +6,8 @@
 <script src="{{ asset('js/jquery.mask.min.js') }}"></script>
 <script src="{{ asset('js/jquery.typeahead.min.js') }}"></script>
 <script src="{{ asset('js/bootbox.min.js') }}"></script>
+<script src="{{ asset('js/moment-with-locales.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('js/tempusdominus.min.js') }}"></script>
 <!-- Additional Rules -->
 <script>
     jQuery(function($){

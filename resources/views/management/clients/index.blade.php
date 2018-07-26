@@ -154,6 +154,31 @@
                 });
             }
 
+            $("#form_Management").validate({
+                rules : {
+                    name: 'required', 
+                    // cpf: {
+                    //     required: true,
+                    //     cpf: true
+                    // },
+                    // password:{
+                    //     required: { 
+                    //         depends: function(element) {
+                    //             if($('#form_User #action').val() === "Add"){
+                    //                 return true;
+                    //             }else{
+                    //                 return false;
+                    //             }
+                    //         }
+                    //     },
+                    //     minlength:6,   
+                    // },
+                },
+                messages:{
+                    name: 'Campo obrigatório',
+                }
+            });
+
             $('#state_id').on('change', function(){
                 if($(this).val() !== ""){
                     getCities();
@@ -208,7 +233,9 @@
                                 return false;
                             }
                         }
-                        submitForm($(this).val());
+                        if($("#form_Management").valid()){
+                            submitForm($(this).val());
+                        }
                         break;
 
                     case 'consult':

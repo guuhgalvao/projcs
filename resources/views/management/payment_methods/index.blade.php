@@ -56,6 +56,17 @@
 @section('scripts')
     <script>
         jQuery(document).ready(function($){
+            function showAlert(messages, type = 'info'){
+                $('#alerts').append('<div class="alert alert-'+type+' alert-dismissible fade show" role="alert" id="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                if($.isArray(messages)){
+                    $.each(messages, function(key, msg){
+                        $('#alert').append('<li>'+msg+'</li>');
+                    });
+                }else{
+                    $('#alert').append(messages);
+                }
+            }
+
             function submitForm(actionType){
                 showLoader(function(){
                     $('#form_Management').ajaxSubmit({
@@ -63,12 +74,10 @@
                         dataType: 'json',
                         success: function(response){
                             if(!Boolean(response.error)){
-                                $('#alerts').append('<div class="alert alert-'+response.alerts['type']+' alert-dismissible fade show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+response.alerts['text']+'</div>');
-                            }else{
-                                $('#alerts').append('<div class="alert alert-'+response.alerts['type']+' alert-dismissible fade show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+response.alerts['text']+'</div>');
+                                $('#form_Management')[0].reset();
+                                $('#form_Management #id').val('');
                             }
-                            $('#form_Management')[0].reset();
-                            $('#form_Management #id').val('');
+                            showAlert(response.alerts['text'], response.alerts['type']);
                             hideLoader();
                         }
                     });
@@ -88,6 +97,33 @@
                     });
                 });
             }
+
+            $("#form_Management").validate({
+                rules : {
+                    code: 'required', 
+                    name: 'required', 
+                    // cpf: {
+                    //     required: true,
+                    //     cpf: true
+                    // },
+                    // password:{
+                    //     required: { 
+                    //         depends: function(element) {
+                    //             if($('#form_User #action').val() === "Add"){
+                    //                 return true;
+                    //             }else{
+                    //                 return false;
+                    //             }
+                    //         }
+                    //     },
+                    //     minlength:6,   
+                    // },
+                },
+                messages:{
+                    code: 'Campo obrigatório',
+                    name: 'Campo obrigatório',
+                }
+            });
 
             $(document).on('click', '.pagination a', function(e){
                 e.preventDefault();
@@ -110,9 +146,7 @@
                                 $('#form_Management #name').val(response.payment_method['name']);
                                 if(response.payment_method['card'] !== 0) $('#form_Management #card').prop('checked', true);
                             }
-                            hideLoader(function(){
-                                //$('#alerts').append('<div class="alert alert-'+response.alerts['type']+' alert-dismissible fade show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+response.alerts['text']+'</div>');
-                            });
+                            hideLoader(function(){});
                         }
                     });
                 });
@@ -128,7 +162,9 @@
                                 return false;
                             }
                         }
-                        submitForm($(this).val());
+                        if($("#form_Management").valid()){
+                            submitForm($(this).val());
+                        }
                         break;
 
                     case 'consult':

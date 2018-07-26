@@ -5,6 +5,7 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
+                        <th>@lang('Code')</th>
                         <th>@lang('Name')</th>
                         <th>@lang('Is Card?')</th>
                     </tr>
@@ -12,6 +13,7 @@
                 <tbody>
                     @foreach($payment_methods as $payment_method)
                         <tr data-id="{{ $payment_method->id }}">
+                            <td>{{ $payment_method->code }}</td>
                             <td>{{ $payment_method->name }}</td>
                             <td>{{ $payment_method->card ? 'Sim' : 'Não' }}</td>
                         </tr>

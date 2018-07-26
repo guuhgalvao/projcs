@@ -66,4 +66,11 @@ Route::group(['prefix' => 'home',  'middleware' => 'auth'], function () {
             Route::post('/', 'Management\UsersController@actions');
         });
     });
+
+    Route::prefix('reports')->group(function () {
+        Route::prefix('services')->group(function () {
+            Route::get('/', 'Reports\ServicesController@index')->name('reports_services');
+            Route::post('/', 'Reports\ServicesController@actions');
+        });
+    });
 });
