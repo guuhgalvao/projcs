@@ -21,7 +21,7 @@
                             <td>{{ $service->order }}</td>
                             <td>{{ $service->user->name }}</td>
                             <td>{{ $service->vehicle->plate.' - '.$service->vehicle->brand.'/'.$service->vehicle->model.' - '.$service->vehicle->color }}</td>
-                            <td>{{ $service->client->name }}</td>
+                            <td>{{ $service->client->name or '-' }}</td>
                             <td>{{ $service->service_type->name }}</td>
                             <td>{{ $service->annotations }}</td>
                         </tr>

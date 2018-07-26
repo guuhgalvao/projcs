@@ -26,6 +26,7 @@ Route::group(['prefix' => 'home',  'middleware' => 'auth'], function () {
         Route::post('/', 'Management\ServicesController@actions');
         Route::get('/start', 'Management\ServicesController@start')->name('start_service');
         Route::get('/finish/{service_id}', 'Management\ServicesController@finish');
+        Route::get('/vehicle/{service_id}', 'Management\ServicesController@vehicle')->name('service_vehicle');
         Route::get('/pdf', 'Management\ServicesController@pdf');
     });
 

@@ -23,6 +23,10 @@ class ServicesController extends Controller
         return view('service.finish', ['service' => Service::find($request->service_id), 'payment_methods' => PaymentMethod::all()]);
     }
 
+    public function vehicle(Request $request){
+        return view('service.vehicle', ['service' => Service::find($request->service_id)]);
+    }
+
     public function pdf(Request $request){
         // return \PDF::loadView('service.order', ['service' => Service::find(1)])
         //     ->setOptions(['isPhpEnabled' => true, 'isRemoteEnabled' => true, 'isHtml5ParserEnabled' => false])
@@ -47,39 +51,45 @@ class ServicesController extends Controller
                 $service_type_attrs = explode('-', str_replace(' ', '', $request->service_types));
                 $service_type = ServiceType::where('code', $service_type_attrs[0])->first();
                 if(!empty($service_type)){
-                    $vehicle = Vehicle::firstOrCreate(['plate' => $request->vehicles]);
-                    if($vehicle->save()){
+                    $vehicle = Vehicle::firstOrCreate(['plate' => strtoupper($request->vehicles)]);
+                    if(!$vehicle->save()){
+                        return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Falha ao salvar veículo']];
+                    }
+                    if(!empty($request->clients)){
                         $client = Client::firstOrCreate(['name' => $request->clients]);
-                        if($client->save()){
-                            $service = new Service();
-                            $service->user_id = Auth::id();
-                            $service->service_type_id = $service_type->id;
-                            $service->vehicle_id = $vehicle->id;
-                            $service->client_id = $client->id;
-                            $service->order = date('Ymd').(Service::max('id')+1);
-                            $service->value = $request->value;
-                            $service->annotations = $request->annotations;
-                            $service->status = 1;
-                            $service->started_in = $request->started_in;
-                            if($service->save()){
-                                $pdf = \PDF::loadView('service.order', ['service' => Service::find($service->id)])
-                                ->setOptions(['isPhpEnabled' => true, 'isRemoteEnabled' => true, 'isHtml5ParserEnabled' => false])
-                                ->setPaper([0, 0, 164.409, 566,929], 'portrait');
-                                // Se quiser que fique no formato a4 retrato: ->setPaper('a4', 'landscape')
-                                $filepath = "public/services/orders/$service->order.pdf";
-                                if(Storage::put($filepath, $pdf->output())){
-                                    return ['error' => false, 'alerts' => ['type' => 'success', 'text' => "Serviço adicionado. Ordem: <b>$service->order</b><br/><br/><a href='".url('/').Storage::url($filepath)."' target='_blank' class='btn btn-info'>Abrir Ordem</a>"], 'redirect' => url()->route('home')];
-                                }else{
-                                    return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não adicionado']];    
-                                }
-                            }else{
-                                return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não adicionado']];
-                            }
-                        }else{
+                        if(!$client->save()){
                             return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Falha ao salvar cliente']];
                         }
+                    }
+                    $service = new Service();
+                    $service->user_id = Auth::id();
+                    $service->service_type_id = $service_type->id;
+                    $service->vehicle_id = $vehicle->id;
+                    if(!empty($request->clients)){
+                        $service->client_id = $client->id;
+                    }
+                    $service->order = date('Ymd').(Service::max('id')+1);
+                    $service->value = $request->value;
+                    $service->annotations = $request->annotations;
+                    $service->status = 1;
+                    $service->started_in = $request->started_in;
+                    $service->started_path = "public/services/orders/started_$service->order.pdf";
+                    if($service->save()){
+                        $pdf = \PDF::loadView('service.order', ['service' => Service::find($service->id)])
+                        ->setOptions(['isPhpEnabled' => true, 'isRemoteEnabled' => true, 'isHtml5ParserEnabled' => false])
+                        ->setPaper([0, 0, 164.409, 566,929], 'portrait');
+                        // Se quiser que fique no formato a4 retrato: ->setPaper('a4', 'landscape')
+                        if(Storage::put($service->started_path, $pdf->output())){
+                            if(empty($vehicle->brand)){
+                                return ['error' => false, 'alerts' => ['type' => 'success', 'text' => "Serviço adicionado"], 'redirect' => url()->route('service_vehicle', ['service_id' => $service->id]), 'vehicle' => true];
+                            }else{
+                                return ['error' => false, 'alerts' => ['type' => 'success', 'text' => "Serviço adicionado. Ordem: <b>$service->order</b><br/><br/><a href='".url('/').Storage::url($service->started_path)."' target='_blank' class='btn btn-info'>Abrir Ordem</a>"], 'redirect' => url()->route('home'), 'vehicle' => true];
+                            }
+                        }else{
+                            return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não adicionado']];    
+                        }
                     }else{
-                        return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Falha ao salvar veículo']];
+                        return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não adicionado']];
                     }
                 }else{
                     return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Serviço não encontrado']];
@@ -91,14 +101,14 @@ class ServicesController extends Controller
                 $service->finished_in = $request->finished_in;
                 $service->value = $request->value;
                 $service->payment_method_id = $request->payment_method_id;
+                $service->finished_path = "public/services/vouchers/finished_$service->order.pdf";
                 if($service->save()){
                     $pdf = \PDF::loadView('service.voucher', ['service' => Service::find($service->id)])
                     ->setOptions(['isPhpEnabled' => true, 'isRemoteEnabled' => true, 'isHtml5ParserEnabled' => false])
                     ->setPaper([0, 0, 164.409, 566,929], 'portrait');
                     // Se quiser que fique no formato a4 retrato: ->setPaper('a4', 'landscape')
-                    $filepath = "public/services/vouchers/$service->order.pdf";
-                    if(Storage::put($filepath, $pdf->output())){
-                        return ['error' => false, 'alerts' => ['type' => 'success', 'text' => "Serviço finalizado<br/><br/><a href='".url('/').Storage::url($filepath)."' target='_blank' class='btn btn-info'>Abrir Comprovante</a>"], 'redirect' => url()->route('home')];
+                    if(Storage::put($service->finished_path, $pdf->output())){
+                        return ['error' => false, 'alerts' => ['type' => 'success', 'text' => "Serviço finalizado<br/><br/><a href='".url('/').Storage::url($service->finished_path)."' target='_blank' class='btn btn-info'>Abrir Comprovante</a>"], 'redirect' => url()->route('home')];
                     }else{
                         return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não adicionado']];    
                     }
@@ -132,6 +142,23 @@ class ServicesController extends Controller
                     return ['error' => false, 'alerts' => ['type' => 'success', 'text' => 'Removido']];
                 }else{
                     return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não removido']];
+                }
+                break;
+
+            case 'save_vehicle':
+                if($vehicle = Vehicle::find($request->id)){
+                    $vehicle->plate = strtoupper($request->plate);
+                    $vehicle->brand = $request->brand;
+                    $vehicle->model = $request->model;
+                    $vehicle->color = $request->color;
+                    if($vehicle->save()){
+                        $service = Service::find($request->service_id);
+                        return ['error' => false, 'alerts' => ['type' => 'success', 'text' => "Atualizado. Ordem: <b>$service->order</b><br/><br/><a href='".url('/').Storage::url($service->started_path)."' target='_blank' class='btn btn-info'>Abrir Ordem</a>"], 'redirect' => url()->route('home')];
+                    }else{
+                        return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não atualizado']];
+                    }
+                }else{
+                    return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Veículo não encontrado']];
                 }
                 break;
 

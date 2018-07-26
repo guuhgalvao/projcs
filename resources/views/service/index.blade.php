@@ -30,7 +30,7 @@
                                                 <div class="typeahead__container">
                                                     <div class="typeahead__field">
                                                         <span class="typeahead__query">
-                                                            <input class="js-typeahead" name="service_types" id="service_types" type="search" autocomplete="off" placeholder="@lang('Code or Service')">
+                                                            <input class="js-typeahead form-control" name="service_types" id="service_types" type="search" autocomplete="off" placeholder="@lang('Code or Service')">
                                                         </span>
                                                         {{-- <span class="typeahead__button">
                                                             <button type="submit">
@@ -46,7 +46,7 @@
                                                 <div class="typeahead__container">
                                                     <div class="typeahead__field">
                                                         <span class="typeahead__query">
-                                                            <input class="js-typeahead maskPlate" name="vehicles" id="vehicles" type="search" autocomplete="off" placeholder="@lang('Plate')">
+                                                            <input class="js-typeahead form-control maskPlate" name="vehicles" id="vehicles" type="search" autocomplete="off" placeholder="ZZZ-9999" style="text-transform: uppercase;">
                                                         </span>
                                                     </div>
                                                 </div>
@@ -108,9 +108,13 @@
                                 $('#form_Management')[0].reset();
                                 $('#form_Management #id').val('');
                                 //$('#alerts').append('<div class="alert alert-'+response.alerts['type']+' alert-dismissible fade show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+response.alerts['text']+'</div>');
-                                bootbox.alert(response.alerts['text'], function() {
+                                if(Boolean(response.vehicle)){
                                     window.location = response.redirect;
-                                });
+                                }else{
+                                    bootbox.alert(response.alerts['text'], function() {
+                                        window.location = response.redirect;
+                                    });
+                                }
                             }else{
                                 $('#alerts').append('<div class="alert alert-'+response.alerts['type']+' alert-dismissible fade show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+response.alerts['text']+'</div>');
                             }
@@ -124,6 +128,8 @@
                 input: "#service_types",
                 order: "asc",
                 minLength: 1,
+                backdrop: true,
+                blurOnTab: false,
                 accent: {
                     from: 'àáâãèéêìíîòóôõùúûÀÁÂÃÈÉÊÌÍÎÒÓÔÕÙÚÛ',
                     to: 'aaaaeeeiiioooouuuAAAAEEEIIIOOOOUUU'
@@ -157,6 +163,8 @@
                 input: "#vehicles",
                 order: "asc",
                 minLength: 1,
+                backdrop: true,
+                blurOnTab: false,
                 accent: {
                     from: 'àáâãèéêìíîòóôõùúûÀÁÂÃÈÉÊÌÍÎÒÓÔÕÙÚÛ',
                     to: 'aaaaeeeiiioooouuuAAAAEEEIIIOOOOUUU'
@@ -180,6 +188,8 @@
                 input: "#clients",
                 order: "asc",
                 minLength: 1,
+                backdrop: true,
+                blurOnTab: false,
                 accent: {
                     from: 'àáâãèéêìíîòóôõùúûÀÁÂÃÈÉÊÌÍÎÒÓÔÕÙÚÛ',
                     to: 'aaaaeeeiiioooouuuAAAAEEEIIIOOOOUUU'
@@ -197,6 +207,33 @@
                 // callback: {
                 //     onClickBefore: function () { console.log('foi'); }
                 // }
+            });
+
+            $("#form_Management").validate({
+                rules : {
+                    started_in: 'required', 
+                    service_types: 'required',
+                    vehicles: 'required', 
+                    value: 'required',
+                    // password:{
+                    //     required: { 
+                    //         depends: function(element) {
+                    //             if($('#form_User #action').val() === "Add"){
+                    //                 return true;
+                    //             }else{
+                    //                 return false;
+                    //             }
+                    //         }
+                    //     },
+                    //     minlength:6,   
+                    // },
+                },
+                messages:{
+                    started_in: 'Campo obrigatório',
+                    service_types: 'Campo obrigatório',
+                    vehicles: 'Campo obrigatório',
+                    value: 'Campo obrigatório',
+                }
             });
 
             function getList(page = 1){
@@ -252,7 +289,9 @@
                                 return false;
                             }
                         }
-                        submitForm($(this).val());
+                        if($("#form_Management").valid()){
+                            submitForm($(this).val());
+                        }
                         break;
 
                     case 'consult':

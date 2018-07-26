@@ -17,7 +17,7 @@ class CreateServicesTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->unsignedInteger('client_id');
+            $table->unsignedInteger('client_id')->nullable();
             $table->foreign('client_id')->references('id')->on('clients');
             $table->unsignedInteger('service_type_id');
             $table->foreign('service_type_id')->references('id')->on('service_types');
@@ -30,7 +30,9 @@ class CreateServicesTable extends Migration
             $table->string('annotations', 300)->nullable();
             $table->unsignedTinyInteger('status');
             $table->timestamp('started_in');
+            $table->string('started_path', 90);
             $table->timestamp('finished_in')->nullable();
+            $table->string('finished_path', 90)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
