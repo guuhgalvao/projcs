@@ -20,7 +20,10 @@ class LoginController extends Controller
 
     use AuthenticatesUsers;
 
-    protected $username = 'nickname';
+    public function username()
+    {
+        return 'username';
+    }
 
     /**
      * Where to redirect users after login.

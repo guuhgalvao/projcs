@@ -413,3 +413,8 @@
 .table-hover tbody tr:hover{
     cursor: pointer;
 }
+
+/* --Custom Checkbox-- */
+.custom-control-label:after, .custom-control-label:before{
+    top: .2rem;
+}
