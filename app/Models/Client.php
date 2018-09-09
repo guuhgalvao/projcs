@@ -34,8 +34,8 @@ class Client extends Model
                 return [
                     "id"            => "required|integer|exists:clients",
                     "name"          => "required|string|min:3|max:60|unique:clients,name,".$request->id,
-                    "cnpj"          => "required_if:id_type,cnpj|string|size:18|unique:clients,cnpj,".$request->id,
-                    "cpf"           => "required_if:id_type,cpf|string|size:14|unique:clients,cpf,".$request->id,
+                    "cnpj"          => "nullable|required_if:id_type,cnpj|string|size:18|unique:clients,cnpj,".$request->id,
+                    "cpf"           => "nullable|required_if:id_type,cpf|string|size:14|unique:clients,cpf,".$request->id,
                     "zipcode"       => "nullable|string|size:9",
                     "state_id"      => "nullable|integer|exists:states,id",
                     "city_id"       => "nullable|integer|exists:cities,id",
