@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Management;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use App\Models\Client;
 use App\Models\State;
 use App\Models\City;
@@ -22,10 +23,20 @@ class ClientsController extends Controller
                 break;
 
             case 'add':
-                if(Client::create($request->all())){
-                    return ['error' => false, 'alerts' => ['type' => 'success', 'text' => 'Adicionado']];
-                }else{
-                    return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não adicionado']];
+                try{
+                    $client = new Client();
+                    $validation = Validator::make($request->all(), $client->rules('add'), $client->messages());
+                    if(!$validation->fails()){
+                        if(Client::create($request->all())){
+                            return ['error' => false, 'alerts' => ['type' => 'success', 'text' => 'Adicionado']];
+                        }else{
+                            return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não adicionado']];
+                        }
+                    }else{
+                        return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => $validation->errors()->all()]];
+                    }
+                } catch(Exception $e){
+                    return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => "FAILED: $e."]];
                 }
                 break;
 
@@ -42,10 +53,20 @@ class ClientsController extends Controller
                 break;
 
             case 'update':
-                if(Client::find($request->id)->update($request->all())){
-                    return ['error' => false, 'alerts' => ['type' => 'success', 'text' => 'Atualizado']];
-                }else{
-                    return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não atualizado']];
+                try{
+                    $client = new Client();
+                    $validation = Validator::make($request->all(), $client->rules('update', $request), $client->messages());
+                    if(!$validation->fails()){
+                        if(Client::find($request->id)->update($request->all())){
+                            return ['error' => false, 'alerts' => ['type' => 'success', 'text' => 'Atualizado']];
+                        }else{
+                            return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não atualizado']];
+                        }
+                    }else{
+                        return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => $validation->errors()->all()]];
+                    }
+                } catch(Exception $e){
+                    return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => "FAILED: $e."]];
                 }
                 break;
 

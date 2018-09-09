@@ -11,9 +11,7 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-8">
                                 <div class="row">
-                                    <div class="col-md-12" id="alerts">
-                                        
-                                    </div>
+                                    <div class="col-md-12" id="alerts"></div>
                                     <form class="col-12" method="POST" action="{{ url('home/management/clients') }}" id="form_Management">
                                         @csrf
                                         <input type="hidden" name="id" id="id">
@@ -99,6 +97,17 @@
 @section('scripts')
     <script>
         jQuery(document).ready(function($){
+            function showAlert(messages, type = 'info'){
+                $('#alerts').append('<div class="alert alert-'+type+' alert-dismissible fade show" role="alert" id="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                if($.isArray(messages)){
+                    $.each(messages, function(key, msg){
+                        $('#alert').append('<li>'+msg+'</li>');
+                    });
+                }else{
+                    $('#alert').append(messages);
+                }
+            }
+
             function submitForm(actionType){
                 showLoader(function(){
                     $('#form_Management').ajaxSubmit({
@@ -106,12 +115,10 @@
                         dataType: 'json',
                         success: function(response){
                             if(!Boolean(response.error)){
-                                $('#alerts').append('<div class="alert alert-'+response.alerts['type']+' alert-dismissible fade show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+response.alerts['text']+'</div>');
-                            }else{
-                                $('#alerts').append('<div class="alert alert-'+response.alerts['type']+' alert-dismissible fade show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+response.alerts['text']+'</div>');
+                                $('#form_Management')[0].reset();
+                                $('#form_Management #id').val('');
                             }
-                            $('#form_Management')[0].reset();
-                            $('#form_Management #id').val('');
+                            showAlert(response.alerts['text'], response.alerts['type']);
                             hideLoader();
                         }
                     });
