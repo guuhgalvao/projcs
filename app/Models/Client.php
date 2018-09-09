@@ -18,8 +18,8 @@ class Client extends Model
             case "add":
                 return [
                     "name"          => "required|string|min:3|max:60|unique:clients",
-                    "cnpj"          => "required_if:id_type,cnpj|string|size:18|unique:clients",
-                    "cpf"           => "required_if:id_type,cpf|string|size:14|unique:clients",
+                    "cnpj"          => "nullable|required_if:id_type,cnpj|string|size:18|unique:clients",
+                    "cpf"           => "nullable|required_if:id_type,cpf|string|size:14|unique:clients",
                     "zipcode"       => "nullable|string|size:9",
                     "state_id"      => "nullable|integer|exists:states,id",
                     "city_id"       => "nullable|integer|exists:cities,id",
