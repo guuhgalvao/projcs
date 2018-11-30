@@ -36,19 +36,13 @@
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label><b>@lang('Client')</b></label>
-                                                <input type="text" class="form-control-plaintext" readonly value="{{ $service->client->name }}">
+                                                <input type="text" class="form-control-plaintext" readonly value="{{ $service->client->name or '-' }}">
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label><b>@lang('Annotations')</b></label>
-                                                <input type="text" class="form-control-plaintext" readonly value="{{ $service->annotations }}">
+                                                <input type="text" class="form-control-plaintext" readonly value="{{ $service->annotations or '-' }}">
                                             </div>
                                         </div>
-                                        {{-- <div class="form-row">
-                                            <div class="form-group col-md-12">
-                                                <label><b>@lang('Annotations')</b></label>
-                                                <input type="text" class="form-control-plaintext" readonly value="{{ $service->annotations }}">
-                                            </div>
-                                        </div> --}}
                                         <div class="form-row">
                                             <div class="form-group col-md-4">
                                                 <label for="finished_in">@lang('Finalize in')</label>

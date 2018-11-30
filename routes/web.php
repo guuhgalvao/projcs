@@ -26,6 +26,7 @@ Route::group(['prefix' => 'home',  'middleware' => 'auth'], function () {
         Route::post('/', 'Management\ServicesController@actions');
         Route::get('/start', 'Management\ServicesController@start')->name('start_service');
         Route::get('/finish/{service_id}', 'Management\ServicesController@finish');
+        Route::get('/schedule/{service_id}', 'Management\ServicesController@schedule');
         Route::get('/vehicle/{service_id}', 'Management\ServicesController@vehicle')->name('service_vehicle');
         Route::get('/pdf', 'Management\ServicesController@pdf');
     });
@@ -59,6 +60,11 @@ Route::group(['prefix' => 'home',  'middleware' => 'auth'], function () {
         Route::prefix('vehicles')->group(function () {
             Route::get('/', 'Management\VehiclesController@index')->name('vehicles');
             Route::post('/', 'Management\VehiclesController@actions');
+        });
+
+        Route::prefix('vehicles_observations')->group(function () {
+            Route::get('/', 'Management\VehiclesObservationsController@index')->name('vehicles_observations');
+            Route::post('/', 'Management\VehiclesObservationsController@actions');
         });
 
         Route::prefix('users')->group(function () {

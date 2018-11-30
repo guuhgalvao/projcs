@@ -25,11 +25,12 @@
                                 <th>@lang('Client')</th>
                                 <th>@lang('Service Type')</th>
                                 <th>@lang('Annotations')</th>
+                                <th>@lang('Status')</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($services as $service)
-                                <tr data-id="{{ $service->id }}">
+                                <tr data-id="{{ $service->id }}" data-status="{{ $service->status }}">
                                     <td>{{ $service->started_in or '-' }}</td>
                                     <td>{{ $service->order or '-' }}</td>
                                     <td>{{ $service->user->name or '-' }}</td>
@@ -37,6 +38,7 @@
                                     <td>{{ $service->client->name or '-' }}</td>
                                     <td>{{ $service->service_type->name or '-' }}</td>
                                     <td>{{ $service->annotations or '-' }}</td>
+                                    <td>{{ config('constants.status.'.$service->status) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -95,7 +97,15 @@
 
             $(document).on('click', '#tb_ResultList tbody tr', function(e){
                 //$('#form_Management #id').val($(this).data('id'));
-                window.location = 'home/services/finish/'+$(this).data('id');
+                switch($(this).data('status')){
+                    case 1:
+                        window.location = '{{ route("services") }}/finish/'+$(this).data('id');
+                        break;
+
+                    case 3:
+                        window.location = '{{ route("services") }}/schedule/'+$(this).data('id');
+                        break;
+                }
             });
         });
     </script>

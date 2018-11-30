@@ -13,6 +13,7 @@
                         <th>@lang('Client')</th>
                         <th>@lang('Service Type')</th>
                         <th>@lang('Annotations')</th>
+                        <th>@lang('Status')</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -26,6 +27,7 @@
                             <td>{{ $service->client->name or '-' }}</td>
                             <td>{{ $service->service_type->name or '-' }}</td>
                             <td>{{ $service->annotations or '-' }}</td>
+                            <td>{{ config('constants.status.'.$service->status) }}</td>
                         </tr>
                     @endforeach
                 </tbody>

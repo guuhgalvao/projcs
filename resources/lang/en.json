@@ -36,8 +36,11 @@
     "Services": "Serviços",
     "Service": "Serviço",
     "New Service": "Novo Serviço",
+    "Start Service": "Iniciar Serviço",
     "Finalize Service": "Finalizar Serviço",
     "Manage Vehicles": "Gerenciar Veículos",
+    "Manage Vehicles Observations": "Gerenciar Observações",
+    "Vehicles Observations": "Observações dos Veículos",
     "Edit Vehicle": "Editar Veículo",
     "Vehicles List": "Lista de Veículos",
     "Vehicles": "Veículos",
@@ -78,7 +81,10 @@
     "Consult": "Consultar",
     "Update": "Alterar",
     "Remove": "Remover",
+    "Start": "Iniciar",
     "Finalize": "Finalizar",
+    "Schedule": "Agendar",
     "Code": "Código",
-    "Code or Service": "Código ou Serviço"
+    "Code or Service": "Código ou Serviço",
+    "Observation": "Observação"
 }

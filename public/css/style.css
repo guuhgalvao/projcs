@@ -409,6 +409,11 @@
     }
 }
 
+/* --Navbar-- */
+.dropdown-item.active, .dropdown-item:active {
+    background-color: #17a2b8;
+}
+
 /* --Table-- */
 .table-hover tbody tr:hover{
     cursor: pointer;

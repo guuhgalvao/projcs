@@ -42,7 +42,7 @@ class Service extends Model
 
     public function getStartedInAttribute($value)
     {
-        return Carbon::createFromFormat('Y-m-d H:i:s', $value)->format('d/m/Y H:i');
+        return !empty($value) ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format('d/m/Y H:i') : NULL;
     }
 
     public function setFinishedInAttribute($value)

@@ -19,10 +19,10 @@
                                             <div class="form-group col-md-4">
                                                 <label for="started_in">@lang('Start in')</label>
                                                 <div class="input-group">
-                                                    <div class="input-group-prepend">
+                                                    <input type="text" class="form-control maskDateTime" name="started_in" id="started_in" placeholder="" value="{{ date('d/m/Y H:i:s') }}">
+                                                    <div class="input-group-append">
                                                         <span class="input-group-text"><i class="far fa-clock"></i></span>
                                                     </div>
-                                                    <input type="text" class="form-control maskDateTime" name="started_in" id="started_in" placeholder="" value="{{ date('d/m/Y H:i:s') }}">
                                                 </div>
                                             </div>
                                             <div class="form-group col-md-4">
@@ -79,7 +79,8 @@
                                                 <textarea class="form-control" name="annotations" id="annotations" rows="3"></textarea>
                                             </div>
                                         </div>
-                                        <button type="button" class="btn btn-info" name="btn_Action" value="add">@lang('Add')</button>
+                                        <button type="button" class="btn btn-info" name="btn_Action" value="start">@lang('Start')</button>
+                                        <button type="button" class="btn btn-info" name="btn_Action" value="schedule">@lang('Schedule')</button>
                                         {{-- <button type="button" class="btn btn-info" name="btn_Action" value="consult">@lang('Consult')</button>
                                         <button type="button" class="btn btn-info" name="btn_Action" value="update">@lang('Update')</button>
                                         <button type="button" class="btn btn-info" name="btn_Action" value="remove">@lang('Remove')</button> --}}
@@ -123,6 +124,21 @@
                     });
                 });
             }
+
+            $('#started_in').datetimepicker({
+                locale: 'pt-br',
+                //allowInputToggle: true,
+                useCurrent: false,
+                //maxDate: new Date(),
+                format: 'DD/MM/YYYY HH:mm:ss',
+                icons: {
+                    time: "fa fa-clock",
+                    date: "fa fa-calendar",
+                }
+            });
+            $('#started_in').on('change.datetimepicker', function(){
+                $('#started_in').datetimepicker('hide');
+            });
 
             $.typeahead({
                 input: "#service_types",

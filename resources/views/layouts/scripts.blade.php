@@ -7,10 +7,11 @@
 <script src="{{ asset('js/jquery.typeahead.min.js') }}"></script>
 <script src="{{ asset('js/bootbox.min.js') }}"></script>
 <script src="{{ asset('js/moment-with-locales.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('js/tempusdominus.min.js') }}"></script>
+<script src="{{ asset('js/bootstrap-datetimepicker.min.js') }}"></script>
+{{-- <script src="{{ asset('js/tempusdominus-bootstrap-4.min.js') }}"></script> --}}
 <!-- Additional Rules -->
 <script>
-    jQuery(function($){
+    jQuery(document).ready(function($){
         $('.maskDate').mask('00/00/0000');
         $('.maskTime').mask('00:00:00');
         $('.maskHour').mask('00:00');
@@ -19,7 +20,16 @@
         $('.maskAddressNumber').mask('09999');
         $('.maskTwoNumber').mask('09');
         // $('.maskPhone').mask('0000-0000');
-        $('.maskPhoneWithDDD').mask('(00) 0000-0000');
+        $('.maskPhoneWithDDD').mask('(00) 0000-00009');
+        var SPMaskBehavior = function (val) {
+            return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
+        },
+        spOptions = {
+            onKeyPress: function(val, e, field, options) {
+                field.mask(SPMaskBehavior.apply({}, arguments), options);
+            }
+        };
+        $('.maskSPCelPhone').mask(SPMaskBehavior, spOptions);
         // $('.maskPhoneUS').mask('(000) 000-0000');
         // $('.mixed').mask('AAA 000-S0S');
         $('.maskCPF').mask('000.000.000-00', {reverse: true});

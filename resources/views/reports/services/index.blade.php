@@ -16,28 +16,49 @@
                         <form method="POST" action="{{ route('reports_services') }}" class="form-horizontal" id="form_Filter">
                             @csrf
                             <div class="form-row">                                            
-                                <div class="form-group col-lg-5">
+                                <div class="form-group col-lg-4">
                                     <label for="start" class="col-form-label control-label text-md-right">{{ __('Period') }}</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                                        </div>
                                         <input id="start" type="text" class="form-control maskDate datetimepicker-input" data-target="#start" data-toggle="datetimepicker" name="start" placeholder="{{ __('start') }}">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text">-</span>
-                                        </div>                                                        
-                                        <input id="end" type="text" class="form-control maskDate datetimepicker-input" data-target="#end" data-toggle="datetimepicker" name="end" placeholder="{{ __('end') }}">
-                                        <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                                        </div>
+                                        </div>                                                   
+                                        <input id="end" type="text" class="form-control maskDate datetimepicker-input" data-target="#end" data-toggle="datetimepicker" name="end" placeholder="{{ __('end') }}">
                                     </div>                                                                                                
                                 </div>                                            
-                                <div class="form-group col-lg-3">
+                                {{-- <div class="form-group col-lg-3">
                                     <label for="user" class="col-form-label text-md-right">{{ __('User') }}</label>
                                     <select name="user" id="user" class="custom-select">
                                         <option value="" selected>{{ __('Select') }}</option>
                                         @foreach($users as $user)
                                             <option value="{{$user->id}}">{{$user->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div> --}}
+                                <div class="form-group col-lg-3">
+                                    <label for="client_id" class="col-form-label text-md-right">{{ __('Client') }}</label>
+                                    <select name="client_id" id="client_id" class="custom-select">
+                                        <option value="" selected>{{ __('Select') }}</option>
+                                        @foreach($clients as $client)
+                                            <option value="{{ $client->id }}">{{ $client->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-3">
+                                    <label for="service_type_id" class="col-form-label text-md-right">{{ __('Service Type') }}</label>
+                                    <select name="service_type_id" id="service_type_id" class="custom-select">
+                                        <option value="" selected>{{ __('Select') }}</option>
+                                        @foreach($service_types as $service_type)
+                                            <option value="{{ $service_type->id }}">{{ $service_type->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-3">
+                                    <label for="status" class="col-form-label text-md-right">{{ __('Status') }}</label>
+                                    <select name="status" id="status" class="custom-select">
+                                        <option value="" selected>{{ __('Select') }}</option>
+                                        @foreach(config('constants.status') as $status_id => $status_name)
+                                            <option value="{{ $status_id }}">{{ $status_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -62,6 +83,7 @@
                                 <th>@lang('Client')</th>
                                 <th>@lang('Service Type')</th>
                                 <th>@lang('Annotations')</th>
+                                <th>@lang('Status')</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,6 +97,7 @@
                                     <td>{{ $service->client->name or '-' }}</td>
                                     <td>{{ $service->service_type->name or '-' }}</td>
                                     <td>{{ $service->annotations or '-' }}</td>
+                                    <td>{{ config('constants.status.'.$service->status) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

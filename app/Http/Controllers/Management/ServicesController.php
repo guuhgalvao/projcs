@@ -16,7 +16,11 @@ use App\Models\Vehicle;
 class ServicesController extends Controller
 {
     public function start(){
-        return view('service.index', ['clients' => Client::all(), 'service_types' => ServiceType::all(), 'vehicles' => Vehicle::all()]);
+        return view('service.start', ['clients' => Client::all(), 'service_types' => ServiceType::all(), 'vehicles' => Vehicle::all()]);
+    }
+
+    public function schedule(Request $request){
+        return view('service.schedule', ['service' => Service::find($request->service_id)]);
     }
 
     public function finish(Request $request){
@@ -47,7 +51,8 @@ class ServicesController extends Controller
                 return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Tipo não encontrado']];
                 break;
 
-            case 'add':
+            case 'start':
+            case 'schedule':
                 $service_type_attrs = explode('-', str_replace(' ', '', $request->service_types));
                 $service_type = ServiceType::where('code', $service_type_attrs[0])->first();
                 if(!empty($service_type)){
@@ -71,7 +76,7 @@ class ServicesController extends Controller
                     $service->order = date('Ymd').(Service::max('id')+1);
                     $service->value = $request->value;
                     $service->annotations = $request->annotations;
-                    $service->status = 1;
+                    $service->status = $request->actionType == 'schedule' ? 3 : 1;
                     $service->started_in = $request->started_in;
                     $service->started_path = "public/services/orders/started_$service->order.pdf";
                     if($service->save()){
@@ -80,9 +85,13 @@ class ServicesController extends Controller
                         if(Storage::put($service->started_path, \PDF::loadView('service.order', ['service' => Service::find($service->id)])->setOptions(['isPhpEnabled' => true, 'isHtml5ParserEnabled' => false])->setPaper([0, 0, 164.409, 566,929], 'portrait')->output())){
                         //if(Storage::put($service->started_path, \PDF::loadFile(Storage::url("public/services/orders/started_$service->order.html"))->setOptions(['isPhpEnabled' => true, 'isHtml5ParserEnabled' => true])->setPaper([0, 0, 164.409, 566,929])->output())){
                             if(empty($vehicle->brand)){
-                                return ['error' => false, 'alerts' => ['type' => 'success', 'text' => "Serviço adicionado"], 'redirect' => url()->route('service_vehicle', ['service_id' => $service->id]), 'vehicle' => true];
+                                return ['error' => false, 'alerts' => ['type' => 'success', 'text' => "Serviço iniciado"], 'redirect' => url()->route('service_vehicle', ['service_id' => $service->id]), 'vehicle' => true];
                             }else{
-                                return ['error' => false, 'alerts' => ['type' => 'success', 'text' => "Serviço adicionado. Ordem: <b>$service->order</b><br/><br/><a href='".url('/').Storage::url($service->started_path)."' target='_blank' class='btn btn-info'>Abrir Ordem</a>"], 'redirect' => url()->route('home'), 'vehicle' => true];
+                                if($request->actionType == 'schedule'){
+                                    return ['error' => false, 'alerts' => ['type' => 'success', 'text' => "Serviço agendado"], 'redirect' => url()->route('service_vehicle', ['service_id' => $service->id]), 'vehicle' => false];
+                                }else{
+                                    return ['error' => false, 'alerts' => ['type' => 'success', 'text' => "Serviço iniciado. Ordem: <b>$service->order</b><br/><br/><a href='".url('/').Storage::url($service->started_path)."' target='_blank' class='btn btn-info'>Abrir Ordem</a>"], 'redirect' => url()->route('home'), 'vehicle' => false];
+                                }
                             }
                         }else{
                             return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não foi possível gerar o comprovante']];    
@@ -95,11 +104,22 @@ class ServicesController extends Controller
                 }
                 break;
 
+            case 'schedule_start':
+                $service = Service::find($request->id);
+                $service->status = 1;
+                if($service->save()){
+                    return ['error' => false, 'alerts' => ['type' => 'success', 'text' => "Serviço iniciado. Ordem: <b>$service->order</b><br/><br/><a href='".url('/').Storage::url($service->started_path)."' target='_blank' class='btn btn-info'>Abrir Ordem</a>"], 'redirect' => url()->route('home')];
+                }else{
+                    return ['error' => true, 'alerts' => ['type' => 'danger', 'text' => 'Não adicionado']];
+                }
+                break;
+
             case 'finalize':
                 $service = Service::find($request->id);
                 $service->finished_in = $request->finished_in;
                 $service->value = $request->value;
                 $service->payment_method_id = $request->payment_method_id;
+                $service->status = 2;
                 $service->finished_path = "public/services/vouchers/finished_$service->order.pdf";
                 if($service->save()){
                     $pdf = \PDF::loadView('service.voucher', ['service' => Service::find($service->id)])

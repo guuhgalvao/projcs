@@ -20,7 +20,8 @@
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link href="{{ asset('css/fontawesome-all.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/jquery.typeahead.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/tempusdominus.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
+    {{-- <link href="{{ asset('css/tempusdominus-bootstrap-4.min.css') }}" rel="stylesheet"> --}}
 </head>
 <body>
     <div class="loader animated" id="loader">
@@ -70,6 +71,7 @@
                                 <a class="dropdown-item" href="{{ url()->route('service_types') }}">@lang('Service Types')</a>
                                 <a class="dropdown-item" href="{{ url()->route('values') }}">@lang('Values')</a>
                                 <a class="dropdown-item" href="{{ url()->route('vehicles') }}">@lang('Vehicles')</a>
+                                <a class="dropdown-item" href="{{ url()->route('vehicles_observations') }}">@lang('Vehicles Observations')</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ url()->route('users') }}">@lang('Users')</a>
                                 {{-- <a class="dropdown-item disabled" href="#">Por enquanto nada</a> --}}
